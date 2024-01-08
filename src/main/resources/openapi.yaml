@@ -1,0 +1,228 @@
+openapi: "3.0.0"
+info:
+  title: TODO API Document
+  version: "0.0.1"
+  description: TODO API のドキュメントです
+tags:
+  - name: todos
+    description: Todo関連のAPI
+paths:
+  /todos/:
+    get:
+      summary: "Todo一覧取得"
+      description: "Todoの一覧を取得できます"
+      operationId: "listTodos"
+      tags:
+        - todos
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTodosDto"
+    post:
+      summary: "Todos作成"
+      description: "Todoを新規作成します"
+      operationId: "createTodo"
+      tags:
+        - todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTodoDto"
+      responses:
+        201:
+          description: "Created"
+          headers:
+            location:
+              description: "作成されたリソースのURI"
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoDto"
+  /todos/{todoId}:
+    get:
+      summary: "Todo取得"
+      description: "指定されたTodoIDのタスクを1件取得します"
+      tags:
+        - todos
+      operationId: getTodo
+      parameters:
+        - name: todoId
+          in: path
+          required: true
+          description: "詳細を取得するTodoのID"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoDto"
+        '404':
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
+
+    put:
+      summary: "Todo更新"
+      description: "指定されたTodoをリクエストボディの内容で上書きします"
+      operationId: "editTodo"
+      tags:
+        - todos
+      parameters:
+        - name: todoId
+          in: path
+          required: true
+          description: "更新するTodoのID"
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TodoDto"
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoDto"
+    delete:
+      summary: "Todo削除"
+      description: "指定されたTodoを削除します"
+      operationId: "deleteTodo"
+      tags:
+        - todos
+      parameters:
+        - name: todoId
+          in: path
+          required: true
+          description: "更新するTodoのID"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "No Content"
+
+components:
+  schemas:
+    GetTodosDto:
+      type: object
+      properties:
+        todos:
+          type: array
+          items:
+            $ref: "#/components/schemas/TodoDto"
+    TodoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "TodoのID"
+        content:
+          type: string
+          description: "Todoの内容"
+        status:
+          type: string
+          description: "Todoのステータス"
+          enum:
+            - "in_progress"
+            - "completed"
+        deadline:
+          type: string
+          description: Todoの期限作成
+          format: date-time
+        userId:
+          type: integer
+          format: int64
+          description: "Todoの作成者"
+        category:
+          type: string
+          description: Todoのカテゴリ
+    CreateTodoDto:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Todoの内容"
+        status:
+          type: string
+          description: "Todoのステータス"
+          enum:
+            - "in_progress"
+            - "completed"
+        deadline:
+          type: string
+          description: Todoの期限作成
+          format: date-time
+        userId:
+          type: integer
+          format: int64
+          description: "Todoの作成者"
+        category:
+          type: string
+          description: Todoのカテゴリ
+    ResourceNotFoundError:
+      description: "指定したリソースが存在しない"
+      type: object
+      properties:
+        title:
+          type: string
+          description: "エラーのタイトル"
+          default: "Resource Not Found"
+        detail:
+          type: string
+          description: "エラーの詳細"
+      required:
+        - title
+        - detail
+    BadRequestError:
+      description: "リクエストが不正"
+      type: object
+      properties:
+        title:
+          type: string
+          description: "エラーのタイトル"
+          default: "Bad Request"
+        detail:
+          type: string
+          description: "エラーの詳細"
+          default: "リクエストが不正です。正しいリクエストでリトライしてください"
+        invalid-params:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvalidParam"
+      required:
+        - title
+        - detail
+        - invalid-params
+    InvalidParam:
+      description: "不正なリクエストについての詳細"
+      type: object
+      properties:
+        name:
+          type: string
+          description: "エラーが発生したフィールド名"
+        reason:
+          type: string
+          description: "エラーの理由"
+      required:
+        - name
+        - reason
