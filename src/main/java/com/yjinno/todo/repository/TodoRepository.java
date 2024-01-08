@@ -15,10 +15,10 @@ public interface TodoRepository {
     Optional<TodoRecord> select(long todoId);
 
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    @Insert("INSERT INTO todos (content,status,user_id,deadline) VALUES (#{content},#{status},#{userId},#{deadline})")
+    @Insert("INSERT INTO todos (content,status,user_id,deadline,category) VALUES (#{content},#{status},#{userId},#{deadline},#{category})")
     void insert(TodoRecord record);
 
-    @Update("UPDATE todos SET content = #{content},status = #{status},user_id = #{userId}, deadline = #{deadline} WHERE id = #{id}")
+    @Update("UPDATE todos SET content = #{content},status = #{status},user_id = #{userId}, deadline = #{deadline},category = #{category} WHERE id = #{id}")
     void update(TodoRecord record);
 
     @Delete("DELETE FROM todos WHERE id = #{id}")

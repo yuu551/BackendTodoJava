@@ -12,4 +12,5 @@ public class TodoEntity {
     LocalDateTime deadline;
     long userId;
     String status;
+    String category;
 }

@@ -12,5 +12,6 @@ public class TodoRecord {
     String status;
     long userId;
     LocalDateTime deadline;
+    String category;
 
 }

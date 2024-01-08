@@ -43,14 +43,14 @@ public class TodosController implements TodosApi {
 
     @Override
     public ResponseEntity<TodoDto> createTodo(CreateTodoDto form){
-        var entity = todoService.create(form.getContent(),form.getDeadline().toLocalDateTime(), form.getUserId(), form.getStatus().getValue());
+        var entity = todoService.create(form.getContent(),form.getDeadline().toLocalDateTime(), form.getUserId(), form.getStatus().getValue(), form.getCategory());
         var dto = toTodoDTO(entity);
         return ResponseEntity.ok(dto);
     }
 
     @Override
     public ResponseEntity<TodoDto> editTodo(Long todoId,TodoDto form){
-        var entity = todoService.update(todoId,form.getContent(),form.getDeadline().toLocalDateTime(),form.getUserId(),form.getStatus().getValue());
+        var entity = todoService.update(todoId,form.getContent(),form.getDeadline().toLocalDateTime(),form.getUserId(),form.getStatus().getValue(), form.getCategory());
         var dto = toTodoDTO(entity);
         return ResponseEntity.ok(dto);
     }
@@ -68,6 +68,7 @@ public class TodosController implements TodosApi {
         todoDTO.setStatus(TodoDto.StatusEnum.fromValue(todoEntity.getStatus()));
         todoDTO.setDeadline(todoEntity.getDeadline().atOffset(ZoneOffset.ofHours(0)));
         todoDTO.setUserId(todoEntity.getUserId());
+        todoDTO.setCategory(todoEntity.getCategory());
         return todoDTO;
     }
 

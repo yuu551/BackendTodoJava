@@ -16,23 +16,23 @@ public class TodoService {
     private final TodoRepository todoRepository;
 
     public List<TodoEntity> find() {
-        return todoRepository.selectList().stream().map(record -> new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus())).collect(Collectors.toList());
+        return todoRepository.selectList().stream().map(record -> new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus(),record.getCategory())).collect(Collectors.toList());
     }
 
     public TodoEntity find(long todoId) {
-        return todoRepository.select(todoId).map(record -> new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus())).orElseThrow(() -> new TodoEntityNotFoundException(todoId));
+        return todoRepository.select(todoId).map(record -> new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus(), record.getCategory())).orElseThrow(() -> new TodoEntityNotFoundException(todoId));
 
     }
 
-    public TodoEntity create(String content, LocalDateTime deadline,long userId,String status){
-        var record = new TodoRecord(null,content,status,userId,deadline);
+    public TodoEntity create(String content, LocalDateTime deadline,long userId,String status,String category){
+        var record = new TodoRecord(null,content,status,userId,deadline,category);
         todoRepository.insert(record);
-        return new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus());
+        return new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus(), record.getCategory());
     }
 
-    public TodoEntity update(long todoId,String content, LocalDateTime deadline,long userId,String status){
+    public TodoEntity update(long todoId,String content, LocalDateTime deadline,long userId,String status,String category){
         todoRepository.select(todoId).orElseThrow(() -> new TodoEntityNotFoundException(todoId));
-        todoRepository.update(new TodoRecord(todoId,content,status,userId,deadline));
+        todoRepository.update(new TodoRecord(todoId,content,status,userId,deadline,category));
         return find(todoId);
     }
 
