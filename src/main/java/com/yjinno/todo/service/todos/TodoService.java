@@ -3,6 +3,8 @@ package com.yjinno.todo.service.todos;
 import com.yjinno.todo.repository.TodoRecord;
 import com.yjinno.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,8 +26,7 @@ public class TodoService {
 
     }
 
-    public TodoEntity create(String content, LocalDateTime deadline,long userId,String status,String category){
-        var record = new TodoRecord(null,content,status,userId,deadline,category);
+    public TodoEntity create(TodoRecord record){
         todoRepository.insert(record);
         return new TodoEntity(record.getId(), record.getContent(), record.getDeadline(), record.getUserId(), record.getStatus(), record.getCategory());
     }

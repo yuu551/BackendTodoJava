@@ -4,6 +4,7 @@ import com.yjinno.todo.controller.TodosApi;
 import com.yjinno.todo.model.CreateTodoDto;
 import com.yjinno.todo.model.GetTodosDto;
 import com.yjinno.todo.model.TodoDto;
+import com.yjinno.todo.repository.TodoRecord;
 import com.yjinno.todo.service.todos.TodoEntity;
 import com.yjinno.todo.service.todos.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,8 @@ public class TodosController implements TodosApi {
 
     @Override
     public ResponseEntity<TodoDto> createTodo(CreateTodoDto form){
-        var entity = todoService.create(form.getContent(),form.getDeadline().toLocalDateTime(), form.getUserId(), form.getStatus().getValue(), form.getCategory());
+        var todoRecord = new TodoRecord(null,form.getContent(),form.getStatus().getValue(),form.getUserId(),form.getDeadline().toLocalDateTime(),form.getCategory());
+        var entity = todoService.create(todoRecord);
         var dto = toTodoDTO(entity);
         return ResponseEntity.ok(dto);
     }
